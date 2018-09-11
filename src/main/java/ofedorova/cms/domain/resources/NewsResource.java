@@ -41,7 +41,7 @@ public class NewsResource {
 
     @GetMapping(value = "/{id}/review/{userId}")
     public ResponseEntity<Review> review(@PathVariable("id") String id, @PathVariable("userId") String userId){
-        return ResponseEntity.ok(new Review());
+        return ResponseEntity.ok(new Review("1", "12"));
     }
 
     @GetMapping(value = "/revised")
