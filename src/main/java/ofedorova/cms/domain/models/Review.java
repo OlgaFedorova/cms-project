@@ -1,15 +1,19 @@
 package ofedorova.cms.domain.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.Embeddable;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Embeddable
 public class Review {
 
-    private String userId;
-    private String status;
+    String userId;
 
-    public Review(String userId, String status) {
-        this.userId = userId;
-        this.status = status;
-    }
+    String status;
+
 }

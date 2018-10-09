@@ -1,11 +1,12 @@
 package ofedorova.cms.domain.service;
 
+import ofedorova.cms.domain.exceptions.UserNotFoundException;
 import ofedorova.cms.domain.models.User;
 import ofedorova.cms.domain.repository.UserRepository;
 import ofedorova.cms.domain.vo.UserRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -18,11 +19,16 @@ public class UserService {
     }
 
     public User update(String id, UserRequest userRequest) {
-        final User user = this.userRepository.findOne(id);
-        user.setIdentity(userRequest.getIdentity());
-        user.setName(userRequest.getName());
-        user.setRole(userRequest.getRole());
-        return this.userRepository.save(user);
+        final Optional<User> user = this.userRepository.findById(id);
+        if (user.isPresent()) {
+            final User userDB = user.get();
+            userDB.setIdentity(userRequest.getIdentity());
+            userDB.setName(userRequest.getName());
+            userDB.setRole(userRequest.getRole());
+            return this.userRepository.save(userDB);
+        } else {
+            throw new UserNotFoundException(id);
+        }
     }
 
     public User create(UserRequest userRequest) {
@@ -35,15 +41,20 @@ public class UserService {
     }
 
     public void delete(String id) {
-        final User user = this.userRepository.findOne(id);
-        this.userRepository.delete(user);
+        final Optional<User> user = this.userRepository.findById(id);
+        user.ifPresent(this.userRepository::delete);
     }
 
-    public List<User> findAll() {
+    public Iterable<User> findAll() {
         return this.userRepository.findAll();
     }
 
     public User findOne(String id) {
-        return this.userRepository.findOne(id);
+        final Optional<User> user = this.userRepository.findById(id);
+        if (user.isPresent()) {
+            return user.get();
+        } else {
+            throw new UserNotFoundException(id);
+        }
     }
 }

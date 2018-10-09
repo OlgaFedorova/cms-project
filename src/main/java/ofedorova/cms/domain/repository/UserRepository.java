@@ -1,8 +1,7 @@
 package ofedorova.cms.domain.repository;
 
 import ofedorova.cms.domain.models.User;
-import org.springframework.stereotype.Component;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Component
-public class UserRepository extends AbstractRepository<User> {
+public interface UserRepository extends JpaRepository<User, String> {
 }
