@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -86,13 +85,4 @@ public class CategoryResource {
         return new ResponseEntity<>(new Category(), HttpStatus.OK);
     }
 
-    @GetMapping("/query")
-    @ApiOperation(value = "List categories by name with starting", notes = "List categories by name with starting")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Categories found"),
-            @ApiResponse(code = 404, message = "Category not found")
-    })
-    public ResponseEntity<List<Category>> findByNameStartingWith(@RequestParam("name") String name) {
-        return ResponseEntity.ok(this.categoryService.findByNameStartingWith(name));
-    }
 }
