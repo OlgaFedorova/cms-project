@@ -1,12 +1,12 @@
 package ofedorova.cms.domain.service;
 
-import ofedorova.cms.domain.exceptions.UserNotFoundException;
 import ofedorova.cms.domain.models.User;
 import ofedorova.cms.domain.repository.UserRepository;
 import ofedorova.cms.domain.vo.UserRequest;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -18,20 +18,16 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User update(String id, UserRequest userRequest) {
-        final Optional<User> user = this.userRepository.findById(id);
-        if (user.isPresent()) {
-            final User userDB = user.get();
-            userDB.setIdentity(userRequest.getIdentity());
-            userDB.setName(userRequest.getName());
-            userDB.setRole(userRequest.getRole());
-            return this.userRepository.save(userDB);
-        } else {
-            throw new UserNotFoundException(id);
-        }
+    public Mono<User> update(String id, UserRequest userRequest) {
+        return this.userRepository.findById(id).flatMap(user -> {
+            user.setIdentity(userRequest.getIdentity());
+            user.setName(userRequest.getName());
+            user.setRole(userRequest.getRole());
+            return this.userRepository.save(user);
+        });
     }
 
-    public User create(UserRequest userRequest) {
+    public Mono<User> create(UserRequest userRequest) {
         User user = new User();
         user.setId(UUID.randomUUID().toString());
         user.setIdentity(userRequest.getIdentity());
@@ -41,20 +37,14 @@ public class UserService {
     }
 
     public void delete(String id) {
-        final Optional<User> user = this.userRepository.findById(id);
-        user.ifPresent(this.userRepository::delete);
+        this.userRepository.deleteById(id);
     }
 
-    public Iterable<User> findAll() {
+    public Flux<User> findAll() {
         return this.userRepository.findAll();
     }
 
-    public User findOne(String id) {
-        final Optional<User> user = this.userRepository.findById(id);
-        if (user.isPresent()) {
-            return user.get();
-        } else {
-            throw new UserNotFoundException(id);
-        }
+    public Mono<User> findOne(String id) {
+        return this.userRepository.findById(id);
     }
 }
